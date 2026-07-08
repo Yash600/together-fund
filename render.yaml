@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: firm-brain-rag
+    runtime: docker
+    dockerfilePath: ./firm-brain-rag/Dockerfile
+    dockerContext: ./firm-brain-rag
+    plan: free
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+
+  - type: web
+    name: deal-screening-agent
+    runtime: docker
+    dockerfilePath: ./deal-screening-agent/Dockerfile
+    dockerContext: ./deal-screening-agent
+    plan: free
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+
+  - type: web
+    name: founder-research-agent
+    runtime: docker
+    dockerfilePath: ./founder-research-agent/Dockerfile
+    dockerContext: ./founder-research-agent
+    plan: free
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+
+  - type: web
+    name: together-tools-web
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: free
+    rootDir: web-app
+    envVars:
+      # These three need to be filled in AFTER the three backends above have
+      # deployed and you have their https://*.onrender.com URLs -- Next.js
+      # bakes NEXT_PUBLIC_* vars into the build, so they must be set before
+      # this service's first successful build, then it needs a redeploy if
+      # you fill them in later.
+      - key: NEXT_PUBLIC_FIRM_BRAIN_URL
+        sync: false
+      - key: NEXT_PUBLIC_DEAL_SCREENING_URL
+        sync: false
+      - key: NEXT_PUBLIC_FOUNDER_RESEARCH_URL
+        sync: false

@@ -1,0 +1,22 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Secrets -- never commit real API keys
+.env
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Generated output from local runs
+*/output/
+*/index/
+
+# OS
+.DS_Store
+Thumbs.db
