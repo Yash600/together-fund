@@ -18,31 +18,33 @@ export default function Home() {
   const active = TABS.find((t) => t.id === activeTab) || TABS[0];
 
   return (
-    <main className="tf-shell">
-      <div className="tf-header">
-        <div>
-          <div className="tf-wordmark">
-            Together<span>.</span>tools
+    <>
+      <main className="tf-shell">
+        <div className="tf-header">
+          <div>
+            <div className="tf-wordmark">
+              Together<span>.</span>tools
+            </div>
           </div>
+          <GemMark />
         </div>
-        <GemMark />
-      </div>
 
-      <div className="tf-tabs">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            className={`tf-tab ${tab.id === activeTab ? "active" : ""}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+        <div className="tf-tabs">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              className={`tf-tab ${tab.id === activeTab ? "active" : ""}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-      {active.render()}
+        {active.render()}
+      </main>
 
       <BigFooterMark />
-    </main>
+    </>
   );
 }

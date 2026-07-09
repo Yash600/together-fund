@@ -56,7 +56,7 @@ p {
 .tf-shell {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 40px 24px 48px;
 }
 
 .tf-header {
@@ -426,6 +426,7 @@ p {
 
 @keyframes tf-gem-float {
   0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 .tf-gem-line {
@@ -455,18 +456,19 @@ p {
 }
 
 .tf-bigfooter {
-  margin-top: 60px;
-  padding-top: 36px;
+  width: 100%;
   border-top: 1px solid var(--tf-border);
   overflow: hidden;
+  padding: 28px 24px 30px;
+  box-sizing: border-box;
 }
 
 .tf-bigfooter-mark {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 130px;
+  font-size: clamp(40px, 10.5vw, 190px);
   line-height: 0.92;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   color: var(--tf-coral);
   white-space: nowrap;
   opacity: 0;
@@ -483,20 +485,10 @@ p {
   transform: translateY(0);
 }
 
-@media (max-width: 900px) {
-  .tf-bigfooter-mark {
-    font-size: 64px;
-  }
-}
-
 .tf-footer-note {
   margin-top: 60px;
   font-size: 12.5px;
   color: var(--tf-ink-soft);
   border-top: 1px solid var(--tf-border);
   padding-top: 18px;
-}
-oter-mark {
-    font-size: 64px;
-  }
 }
