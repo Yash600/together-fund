@@ -5,6 +5,7 @@ import FirmBrainTab from "./components/FirmBrainTab";
 import DealScreeningTab from "./components/DealScreeningTab";
 import FounderResearchTab from "./components/FounderResearchTab";
 import GemMark from "./components/GemMark";
+import BigFooterMark from "./components/BigFooterMark";
 
 const TABS = [
   { id: "firm-brain", label: "Firm Brain", render: () => <FirmBrainTab /> },
@@ -41,10 +42,7 @@ export default function Home() {
 
       {active.render()}
 
-      <div className="tf-footer-note">
-        Each tab calls its own independently runnable backend (ports 8000 / 8001 / 8002) -- see
-        each tool's folder under <code>code/</code> for standalone CLI usage and its own README.
-      </div>
+      <BigFooterMark />
     </main>
   );
 }

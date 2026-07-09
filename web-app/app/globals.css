@@ -372,3 +372,38 @@ p {
   border-top: 1px solid var(--tf-border);
   padding-top: 18px;
 }
+
+.tf-bigfooter {
+  margin-top: 60px;
+  padding-top: 36px;
+  border-top: 1px solid var(--tf-border);
+  overflow: hidden;
+}
+
+.tf-bigfooter-mark {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 130px;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--tf-coral);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tf-bigfooter-mark span {
+  color: var(--tf-ink);
+}
+
+.tf-bigfooter-mark.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 900px) {
+  .tf-bigfooter-mark {
+    font-size: 64px;
+  }
+}
