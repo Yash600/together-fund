@@ -16,12 +16,10 @@ Repo:  https://github.com/Yash600/together-fund
 
 ## Live demo
 
-| Service                | URL                              |
-|-------------------------|-----------------------------------|
-| Web app (frontend)      | _fill in your Vercel URL_        |
-| Firm Brain RAG          | _fill in your Render URL_        |
-| Deal Screening Agent    | _fill in your Render URL_        |
-| Founder Research Agent  | _fill in your Render URL_        |
+| Service                | URL                                      |
+|-------------------------|-----------------------------------------|
+| Web app (frontend)      | https://together-fund.vercel.app/       |
+
 
 All three backends expose `GET /health` for a quick liveness check.
 
