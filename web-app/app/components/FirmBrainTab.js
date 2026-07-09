@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { streamSSE } from "../../lib/sse";
 import { mdToHtml } from "../../lib/markdown";
+import ReasoningLog from "./ReasoningLog";
 
 const API_URL = process.env.NEXT_PUBLIC_FIRM_BRAIN_URL || "http://localhost:8000";
 
@@ -22,7 +23,8 @@ function makeSessionId() {
 
 export default function FirmBrainTab() {
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState([]); // { id, role: 'user' | 'assistant', content, isError }
+  const [messages, setMessages] = useState([]); // { id, role, content, isError, log }
+  const [expandedLogs, setExpandedLogs] = useState({}); // message id -> bool
   const [running, setRunning] = useState(false);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -33,6 +35,10 @@ export default function FirmBrainTab() {
   // the page starts a brand new, empty session.
   const [sessionId] = useState(makeSessionId);
   const [sessionUploadCount, setSessionUploadCount] = useState(0);
+
+  function toggleLog(id) {
+    setExpandedLogs((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
 
   async function uploadDoc() {
     if (!uploadFile || uploading) return;
@@ -72,7 +78,8 @@ export default function FirmBrainTab() {
     setQuery(""); // clear the input immediately, like a normal chat app
 
     // Nothing uploaded this session yet -- don't even hit the backend, just
-    // ask for a document like the backend would.
+    // ask for a document like the backend would. Still logged, so it's
+    // obvious *why* nothing happened rather than looking like a silent no-op.
     if (sessionUploadCount === 0) {
       setMessages((prev) => [
         ...prev,
@@ -80,6 +87,7 @@ export default function FirmBrainTab() {
           id: `${Date.now()}-a`,
           role: "assistant",
           content: "Please upload a document above first, then ask your question.",
+          log: [{ step: "scope", detail: "No documents uploaded this session yet -- skipped calling the backend entirely." }],
         },
       ]);
       return;
@@ -88,6 +96,7 @@ export default function FirmBrainTab() {
     setRunning(true);
 
     let finalAnswer = null;
+    const stepLog = [];
     try {
       await streamSSE(
         `${API_URL}/api/firm-brain/query`,
@@ -97,19 +106,32 @@ export default function FirmBrainTab() {
           body: JSON.stringify({ query: q, session_id: sessionId }),
         },
         (event) => {
-          if (event.type === "answer") {
+          if (event.type === "log") {
+            stepLog.push(event);
+          } else if (event.type === "answer") {
             finalAnswer = event.answer;
           }
         }
       );
       setMessages((prev) => [
         ...prev,
-        { id: `${Date.now()}-a`, role: "assistant", content: finalAnswer || "(no answer returned)" },
+        {
+          id: `${Date.now()}-a`,
+          role: "assistant",
+          content: finalAnswer || "(no answer returned)",
+          log: stepLog,
+        },
       ]);
     } catch (e) {
       setMessages((prev) => [
         ...prev,
-        { id: `${Date.now()}-a`, role: "assistant", content: `Error: ${String(e.message || e)}`, isError: true },
+        {
+          id: `${Date.now()}-a`,
+          role: "assistant",
+          content: `Error: ${String(e.message || e)}`,
+          isError: true,
+          log: stepLog,
+        },
       ]);
     } finally {
       setRunning(false);
@@ -163,11 +185,22 @@ export default function FirmBrainTab() {
                 {m.content}
               </div>
             ) : (
-              <div
-                key={m.id}
-                className={`tf-chat-msg tf-chat-assistant tf-result${m.isError ? " error" : ""}`}
-                dangerouslySetInnerHTML={{ __html: mdToHtml(m.content) }}
-              />
+              <div key={m.id} className={`tf-chat-msg tf-chat-assistant${m.isError ? " error" : ""}`}>
+                <div className="tf-result" dangerouslySetInnerHTML={{ __html: mdToHtml(m.content) }} />
+                {m.log && m.log.length > 0 && (
+                  <div className="tf-log-toggle-wrap">
+                    <button className="tf-log-toggle" onClick={() => toggleLog(m.id)}>
+                      {expandedLogs[m.id] ? "Hide" : "Show"} reasoning ({m.log.length} step
+                      {m.log.length === 1 ? "" : "s"})
+                    </button>
+                    {expandedLogs[m.id] && (
+                      <div className="tf-log-panel">
+                        <ReasoningLog entries={m.log} />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )
           )}
           {running && <div className="tf-chat-thinking">Thinking...</div>}

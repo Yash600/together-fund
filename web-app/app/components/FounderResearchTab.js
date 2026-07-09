@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { streamSSE } from "../../lib/sse";
+import ReasoningLog from "./ReasoningLog";
 import MarkdownView from "./MarkdownView";
 
 const API_URL = process.env.NEXT_PUBLIC_FOUNDER_RESEARCH_URL || "http://localhost:8002";
@@ -80,6 +81,14 @@ export default function FounderResearchTab() {
 
       {status && <div className="tf-status">{status}</div>}
       {error && <div className="tf-status error">Error: {error}</div>}
+
+      <div className="tf-card">
+        <div className="tf-section-label">Reasoning trace</div>
+        <ReasoningLog
+          entries={log}
+          emptyText="Run a search to see each step logged here as it happens -- planned queries, live search calls, identity verification, and the US/India comparison."
+        />
+      </div>
 
       <MarkdownView markdown={brief} />
     </div>

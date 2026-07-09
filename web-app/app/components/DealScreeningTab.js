@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { streamSSE } from "../../lib/sse";
+import ReasoningLog from "./ReasoningLog";
 import MarkdownView from "./MarkdownView";
 
 const API_URL = process.env.NEXT_PUBLIC_DEAL_SCREENING_URL || "http://localhost:8001";
@@ -69,6 +70,14 @@ export default function DealScreeningTab() {
 
       {status && <div className="tf-status">{status}</div>}
       {error && <div className="tf-status error">Error: {error}</div>}
+
+      <div className="tf-card">
+        <div className="tf-section-label">Reasoning trace</div>
+        <ReasoningLog
+          entries={log}
+          emptyText="Upload a deck to see each step logged here as it happens -- what's being extracted, what inconsistencies are flagged, how it's scored."
+        />
+      </div>
 
       <MarkdownView markdown={memo} />
     </div>
